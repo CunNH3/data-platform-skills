@@ -1,0 +1,4 @@
+interface:
+  display_name: "申请开发机"
+  short_description: "通过 Processing Service 申请 CPU 或 GPU 开发机并获取 SSH 连接信息"
+  default_prompt: "使用 $processing-dev-pod 确认我的配置并检查可用资源，足够后再创建 SSH 开发机。"

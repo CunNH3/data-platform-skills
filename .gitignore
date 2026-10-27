@@ -1,0 +1,14 @@
+.DS_Store
+Thumbs.db
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+*kubeconfig*
+credentials.json
+artifacts/
