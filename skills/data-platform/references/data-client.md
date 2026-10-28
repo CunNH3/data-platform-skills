@@ -19,7 +19,7 @@ python -m pip install "current-data-py==$SDK_VERSION" requests PyYAML
 ```
 
 - 使用平台已发布且验证兼容的 SDK 版本，在运行环境中固定实际安装的依赖版本。无需访问数据平台代码仓库。
-- 普通用户首次导入 SDK 前确认 `ENV=prod`，其他值停止操作；已确认管理员明确选择 test 时使用 [管理员测试环境](admin.md) 的连接示例。Job 中检查平台注入的 ENV 与已授权目标一致，不覆盖为其他环境。
+- 首次导入 SDK 前按目标环境设置 `ENV`，默认 `prod`；明确选择 test 时使用 [测试环境](test-environment.md) 的连接示例。Job 中检查平台注入的 ENV 与已确认目标一致，不覆盖为其他环境。
 - 在源码仓库里执行示例时，用已安装的 wheel 并从源码目录外运行，避免同名未构建源码覆盖已安装包。
 
 ```python
@@ -36,7 +36,7 @@ with DataClient() as client:
     pass
 ```
 
-- `DataClient()` 的默认地址由已授权目标的 ENV 决定，保持 TLS；上例为普通用户的生产连接。认证使用平台认可的 channel／拦截器；原始 stub 支持 metadata，iter_data／open_td 没有逐次认证参数。
+- `DataClient()` 的默认地址由已确认目标的 ENV 决定，保持 TLS；上例为默认的生产连接。认证使用平台认可的 channel／拦截器；原始 stub 支持 metadata，iter_data／open_td 没有逐次认证参数。
 
 ## 2. 搜索数据：iter_data
 

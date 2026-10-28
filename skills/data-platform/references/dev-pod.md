@@ -1,6 +1,6 @@
 # 开发机使用
 
-开发机默认在生产环境申请和管理，普通用户只使用生产；已确认管理员明确选择 test 时按 [管理员测试环境](admin.md) 操作。创建前必须明确用户名、CPU（核或 m）、内存（GiB 或 MiB）、是否需要 GPU 及数量（张）；缺少的配置一次性询问并等待回复，不套用前端默认值或示例值。已说明的配置不重复问，齐全后汇总申请明细并取得用户确认；已有明确确认时不重复确认。随后检查资源，足够才创建。
+开发机默认在生产环境申请和管理；用户明确选择 test 时按 [测试环境](test-environment.md) 操作。创建前必须明确用户名、CPU（核或 m）、内存（GiB 或 MiB）、是否需要 GPU 及数量（张）；缺少的配置一次性询问并等待回复，不套用前端默认值或示例值。已说明的配置不重复问，齐全后汇总申请明细并取得用户确认；已有明确确认时不重复确认。随后检查资源，足够才创建。
 
 ## 先检查网络
 
@@ -26,7 +26,7 @@
 
 ## 接口
 
-默认使用 [平台接口说明](api.md) 中的生产站点，管理员 test 入口见 [管理员测试环境](admin.md)，再拼接 `/api/processing.service.v1.DataProcessingService/`。
+默认使用 [平台接口说明](api.md) 中的生产站点，test 入口见 [测试环境](test-environment.md)，再拼接 `/api/processing.service.v1.DataProcessingService/`。
 全部使用 POST，头为 `Content-Type: application/json`、`Connect-Protocol-Version: 1`，HTTP 超时 75 秒。
 
 | 方法 | 请求 | 结果 |

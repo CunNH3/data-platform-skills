@@ -12,7 +12,7 @@ DataClient 按特征搜索 → 确认范围并记录本次输入 ID 清单
 
 - 搜索特征使用平台已有字段，如采集任务名前缀、数据类型、采集时间和录制时长；具体字段见 [平台接口说明](api.md)。内容特征由脚本读取候选数据后判断，不假设平台已支持语义搜索。
 - 脚本 main.py 从 `JOB_PARAMETERS_FILE` 读取参数，使用 [DataClient](data-client.md) 查询和读取，按 [TD 规范](td-format.md) 写出，按 [上传规范](data-transfer.md) 登记结果。
-- 环境按 [环境与权限](../SKILL.md#环境与权限) 选择，默认生产；普通用户不能使用 test，管理员测试步骤见 [管理员测试环境](admin.md)。
+- 环境按 [环境与权限](../SKILL.md#环境与权限) 选择，默认生产；明确选择 test 时见 [测试环境](test-environment.md)。
 
 两种方式可使用同一份 params.yaml，以下筛选值为示例，执行前替换为用户确认的条件：
 

@@ -4,7 +4,7 @@
 
 ## 调用入口
 
-默认生产站点：`https://data.current-robotics.work`。普通用户使用此站点；已确认管理员明确选择 test 时，按 [管理员测试环境](admin.md) 使用测试站点。
+默认生产站点：`https://data.current-robotics.work`。用户明确选择 test 时，按 [测试环境](test-environment.md) 使用测试站点。
 
 - HTTP POST，JSON 请求；设置 `Content-Type: application/json`、`Connect-Protocol-Version: 1`，认证沿用目标环境的正式方式。
 - 数据接口前缀：`/api/management.service.v1.DataManagementService/`。
