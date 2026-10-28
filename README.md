@@ -1,6 +1,6 @@
 # 数据平台 Skills
 
-[data-platform](skills/data-platform/SKILL.md) 是数据平台的 Agent 入口。它指导 Agent 检查最新兼容的 `current-data-py`，读取 SDK 包内的能力索引、接口文档、业务 Skill 和案例。
+[data-platform](skills/data-platform/SKILL.md) 是数据平台的 Agent 入口：通过 PyPI 安装或更新最新版 `current-data-py`，再读取包内的 Skill、接口信息和使用示例。
 
 ## 安装
 
@@ -11,12 +11,6 @@
 ```
 
 手动安装时复制整个 `skills/data-platform` 文件夹，安装位置遵循所用 Agent 的要求。使用平台仍需相应认证和网络访问条件。
-
-## 更新说明
-
-- GitHub 保留入口；接口定义和业务正文随 SDK 一起发布，安装后可离线读取。
-- Agent 每次检查入口与 SDK 版本，读取包内更新记录并提示新增内容；任务中使用同一版本。
-- 入口历史见 [更新记录](skills/data-platform/references/updates.md)。
 
 ## 维护与发布
 
