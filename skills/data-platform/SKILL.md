@@ -1,40 +1,22 @@
 ---
 name: data-platform
-description: 使用公司的数据平台搜索和读取数据、上传并登记数据、申请和释放 SSH 开发机、提交处理 Job 并查询状态和日志。用户需要在平台上处理机器人数据、使用 DataClient 或生成 TD 时使用；不用于集群管理或平台部署。
+description: 使用数据平台查询和读取数据、上传登记 TD、申请 SSH 开发机、提交 Job 并查询日志；执行前获取 current-data-py 中的最新兼容说明书。
 ---
 
-# 数据平台使用
+# 数据平台入口
 
-## 每次使用先读取最新说明
+## 每次使用先检查更新
 
-- 每次调用本 Skill，执行平台操作前先重新请求 `https://api.github.com/repos/CunNH3/data-platform-skills/commits/main`，禁用缓存并取得本次 main 的提交 SHA，不复用上次调用的结果。API 限流时可用 `git ls-remote https://github.com/CunNH3/data-platform-skills.git refs/heads/main` 获取 SHA。
-- 随后读取 `https://raw.githubusercontent.com/CunNH3/data-platform-skills/<SHA>/skills/data-platform/SKILL.md`，以该版本的索引为准；本次所需的 references 文档也从同一 SHA 的相对路径读取，不使用安装包里的旧正文替代。
-- 每次都读取同一 SHA 下的 [更新记录](references/updates.md)，开始执行前用 1–3 条概括上次提示之后新增的内容；没有新增时提示“说明书无新增更新”。首次使用或没有历史记录时，只介绍最近一次更新，不把全部历史称为本次更新。
-- 提示成功后，将已提示的最新更新 ID 记录在本地 Agent 状态或当前会话中，不上传到平台，也不要求用户额外确认；没有可读取的状态时按首次使用处理。读取或提示失败不提前更新该 ID。
-- 本次任务需要 SDK 时，先按 [SDK 最新说明与版本核对](references/data-client.md#每次使用前读取最新说明) 读取 PyPI 最新用法和 API，再对照实际安装版本编写、运行代码；同一次调用不为每个函数重复查询。
-- 一次调用固定使用上述 SHA，刷新一次后直接按最新索引执行；下一次调用重新检查 main。无需访问平台源码仓库，也不要求用户重新安装全部文档。
-- 无法查询 main 或读取本次必需文档时，先提示具体失败原因并暂停平台操作，不能将本地缓存当作最新说明继续执行。
+1. 禁用缓存查询 `https://api.github.com/repos/CunNH3/data-platform-skills/commits/main`，取得本次提交 SHA；限流时可用 `git ls-remote https://github.com/CunNH3/data-platform-skills.git refs/heads/main`。读取 `https://raw.githubusercontent.com/CunNH3/data-platform-skills/<SHA>/skills/data-platform/SKILL.md` 作为最新入口，每次调用只刷新一次。
+2. 查询 `https://pypi.org/pypi/current-data-py/json`，核对最新正式版本与 Python 兼容要求。在任务独立环境安装或升级选定版本，不覆盖用户其他项目的依赖；本次任务固定该版本。
+3. 在该环境执行 `python -m current_data_py.docs --index`，先读取索引和它指向的业务 Skill、更新记录，再按能力读取所需 API 和参考文档。
+4. 后续操作遵循包内说明，包括目标环境、资源配置确认、上传登记及开发机释放确认。
 
-## 环境与权限
+- SDK 中的索引负责“能力 → 指南 → 服务文档及 API／SDK 方法”映射；本入口不重复维护业务参数和执行流程。
+- 包内文档可用 `python -m current_data_py.docs --skill`、`--api management`、`--api processing` 或 `--read <包内相对路径>` 读取。
+- 在开发机和任务镜像中使用相同 SDK 版本；不要将另一个版本的文档与当前代码混用。
+- 无法检查版本或读取必要文档时说明失败原因，不声称已获取最新版本。已安装版本没有 `current_data_py.docs` 时，说明需要发布或安装支持包内说明书的 SDK，先停止平台操作。
 
-- 默认使用生产环境（prod）；测试阶段所有用户均可明确选择测试环境（test），无需管理员身份。
-- 选择 test 时按 [测试环境](references/test-environment.md) 操作，数据、开发机和 Job 使用同一目标环境，不自动跨环境重试。平台原有认证和接口权限保持不变。
+## 更新提示
 
-## 能力导航
-
-| 用户要做什么 | 读取的说明 |
-|---|---|
-| 按特征搜索数据、处理并上传 TD：开发机运行或本地构建后提交 Job | [两个完整使用案例](references/use-cases.md) |
-| 申请、查询、SSH 连接或释放开发机 | [开发机使用](references/dev-pod.md) |
-| 提交处理任务、查询状态和日志 | [任务提交与跟踪](references/jobs.md) |
-| 搜索数据、按 ID 查询、读取 TD | [DataClient 使用](references/data-client.md) |
-| 上传数据、登记元数据、核验结果 | [数据读取与上传规范](references/data-transfer.md) |
-| 生成或转换 TD | [TD 文件生成规范](references/td-format.md)，写入代码见 DataClient 使用 |
-| 查具体 API 请求、参数和返回值 | [平台接口说明](references/api.md) |
-| 使用测试环境 | [测试环境](references/test-environment.md) |
-| 查看本次更新 | [更新记录](references/updates.md) |
-
-## 共同约定
-
-- 复用用户已提供的配置和本机认证，只合并询问缺失项；参数确认和资源检查按对应说明执行，不因 Skill 被调用就创建资源。
-- 数据读取使用 DataClient；处理任务的数据结果统一为 TD，上传核验后必须登记到数据平台，返回结果数据 ID 和存储地址。
+读取 SDK 包内的更新记录，提示用户上次已介绍之后的新内容；首次只介绍最近一次更新。入口自身的变更见 [入口更新记录](references/updates.md)。
