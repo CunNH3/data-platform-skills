@@ -5,7 +5,6 @@
 | Skill | 用途 |
 |---|---|
 | [data-platform](skills/data-platform/SKILL.md) | 数据平台完整使用流程，包含开发机直接运行代码、本地构建镜像提交 Job 两个案例 |
-| [processing-dev-pod](skills/processing-dev-pod/SKILL.md) | 独立的开发机申请、查询、SSH 连接和释放说明 |
 
 ## 安装
 
@@ -15,7 +14,7 @@
 请安装 https://github.com/CunNH3/data-platform-skills/tree/main/skills/data-platform 这个 Skill
 ```
 
-只需要开发机功能时，安装 `skills/processing-dev-pod`。手动安装时复制整个 Skill 文件夹，保留 `SKILL.md` 和其引用的全部文件；安装位置遵循所用 Agent 的要求。
+手动安装时复制整个 `skills/data-platform` 文件夹，保留 `SKILL.md` 和其引用的全部文件；安装位置遵循所用 Agent 的要求。
 
 ## 发布与更新
 
