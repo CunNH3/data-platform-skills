@@ -1,12 +1,12 @@
 # 开发机使用
 
-开发机仅在生产环境申请和管理；用户请求其他环境时说明不支持并停止操作，不自动转到生产环境创建。创建前必须明确用户名、CPU（核或 m）、内存（GiB 或 MiB）、是否需要 GPU 及数量（张）；缺少的配置一次性询问并等待回复，不套用前端默认值或示例值。已说明的配置不重复问，齐全后汇总申请明细并取得用户确认；已有明确确认时不重复确认。随后检查资源，足够才创建。
+开发机默认在生产环境申请和管理，普通用户只使用生产；已确认管理员明确选择 test 时按 [管理员测试环境](admin.md) 操作。创建前必须明确用户名、CPU（核或 m）、内存（GiB 或 MiB）、是否需要 GPU 及数量（张）；缺少的配置一次性询问并等待回复，不套用前端默认值或示例值。已说明的配置不重复问，齐全后汇总申请明细并取得用户确认；已有明确确认时不重复确认。随后检查资源，足够才创建。
 
 ## 先检查网络
 
-- 从用户已有配置或生产环境 `ListPods` 取得当前有效的生产 Pod IP，探测 TCP 22，超时 3–5 秒。
+- 从用户已有配置或目标环境 `ListPods` 取得当前有效的 Pod IP，探测 TCP 22，超时 3–5 秒。
 - 能连通就继续；不通再提示连接 VPN，提供[安装和认证文档](https://vcnqhq28cfdm.feishu.cn/wiki/Mhuswc0cXiVc3Rk4E3GcLy6vn1g?fromScene=spaceOverview)。已连接仍不通时检查 IP、路由和端口，不反复要求认证。
-- 没有有效生产 Pod IP 时不猜地址、不额外创建探测 Pod，待取得目标 Pod IP 后验证。公网 API 可访问不代表 SSH 可达。
+- 没有有效目标 Pod IP 时不猜地址、不额外创建探测 Pod，待取得目标 Pod IP 后验证。公网 API 可访问不代表 SSH 可达。
 
 ## 申请参数
 
@@ -26,7 +26,7 @@
 
 ## 接口
 
-使用 [平台接口说明](api.md) 中的生产站点，再拼接 `/api/processing.service.v1.DataProcessingService/`。
+默认使用 [平台接口说明](api.md) 中的生产站点，管理员 test 入口见 [管理员测试环境](admin.md)，再拼接 `/api/processing.service.v1.DataProcessingService/`。
 全部使用 POST，头为 `Content-Type: application/json`、`Connect-Protocol-Version: 1`，HTTP 超时 75 秒。
 
 | 方法 | 请求 | 结果 |

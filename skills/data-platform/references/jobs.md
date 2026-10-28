@@ -6,7 +6,7 @@
 
 | 信息 | 要确认的内容 |
 |---|---|
-| 运行环境 | 仅生产环境 prod，不提供其他环境选项 |
+| 运行环境 | 默认生产 prod；普通用户只使用生产，管理员 test 入口见 [管理员测试环境](admin.md) |
 | 输入数据 | 数据 ID、查询条件或可访问的数据地址；查询得到多条数据时确认处理范围 |
 | 处理要求 | 用户脚本／项目路径，或要求 Agent 编写的业务逻辑及成功标准 |
 | 运行资源 | 未指定时推荐 8 核 CPU、16Gi 内存、0 GPU、超时 12 小时，展示后让用户确认；按任务规模和平台限制调整建议 |
@@ -21,7 +21,7 @@
 
 本机需安装并启动 Docker，并具备基础镜像的拉取权限和任务镜像仓库的推送权限。先使用下面的常用基础镜像构建任务镜像。
 
-构建目录准备 `main.py`、`requirements.txt` 和 `Dockerfile`；将任务使用的 SDK 与业务依赖的已验证版本写入 `requirements.txt`。
+构建目录准备 `main.py`、`requirements.txt` 和 `Dockerfile`；使用 SDK 时先按 [SDK 版本核对](data-client.md#每次使用前读取最新说明) 读取 PyPI 最新用法和 API，再将选定的兼容版本与业务依赖写入 `requirements.txt`。
 
 ```dockerfile
 FROM default-acr-registry.cn-beijing.cr.aliyuncs.com/data_infra/base_image:build-20261016.1@sha256:d0a80f1008332d5b383ac91e92f963937d3dea8444b8651bd75dc4ab25b1be8c
@@ -55,7 +55,7 @@ docker image inspect "$TASK_IMAGE" --format '{{json .RepoDigests}}'
 
 ## Agent 执行流程
 
-1. **读取接口说明。** 先读 [接口说明](api.md)，检查生产 API 是否可达；不通时核对地址、路由及代理，需要 VPN 时再提示用户。
+1. **读取接口说明。** 先读 [接口说明](api.md)，检查已授权目标环境的 API 是否可达；不通时核对地址、路由及代理，需要 VPN 时再提示用户。
 2. **检查输入数据。** 按 [DataClient 使用](data-client.md) 搜索、查询并读取样本，确认数据内容和处理范围。
 3. **准备任务程序。** 按本地 [TD 生成规范](td-format.md) 编写或检查脚本，读取 YAML 参数、输出进度，将 TD 结果上传并调用 RegisterData 登记到数据平台。
 4. **核对运行配置。** 使用已准备好的任务配置，核对输入参数和入口行为；需要本地构建时按 [镜像编译](#镜像编译) 准备，不能假设平台支持直接执行代码包。

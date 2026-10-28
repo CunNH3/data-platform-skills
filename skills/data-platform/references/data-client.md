@@ -4,21 +4,29 @@ DataClient 继承 ManagementClient，负责查询元数据和远端 TD 读取；
 
 数据范围、对象位置和上传登记规则见 [数据读取与上传规范](data-transfer.md)；本文提供对应代码用法。
 
+## 每次使用前读取最新说明
+
+1. 每次任务需要 SDK，先禁用缓存并重新读取 [current-data-py 的 PyPI 说明](https://pypi.org/project/current-data-py/) 和 [发布元数据](https://pypi.org/pypi/current-data-py/json)，核对最新版本、用法及其链接的官方 API 文档，不沿用上次查询结果。涉及 TD 读写时，同样读取 [turbodata](https://pypi.org/project/turbodata/) 的最新说明。
+2. 检查实际运行环境的已安装版本，例如 `importlib.metadata.version("current-data-py")`。已安装版本与最新发布不同，读取 `https://pypi.org/pypi/current-data-py/<版本>/json` 的对应说明；本文示例与 SDK API 不一致时，以本次核对版本的 API 为准。
+3. 文档没有说明的方法或字段，从该版本的发布包源码、`inspect.signature` 或 Protobuf `DESCRIPTOR` 核对，不猜测 API。需要安装或升级时，在任务虚拟环境或镜像中固定选定且兼容的版本，不直接升级用户已有环境。
+4. PyPI 说明用于核对 SDK 用法，不改变本 Skill 的环境权限和上传登记等平台约定。无法获取说明或确认本次所需 API 时，提示具体问题并暂停依赖该 SDK 的操作。
+
 ## 1. 安装与连接
 
 ```sh
-python -m pip install current-data-py requests PyYAML
+SDK_VERSION="<本次核对并选定的版本>"
+python -m pip install "current-data-py==$SDK_VERSION" requests PyYAML
 ```
 
 - 使用平台已发布且验证兼容的 SDK 版本，在运行环境中固定实际安装的依赖版本。无需访问数据平台代码仓库。
-- 仅连接生产环境，首次导入 SDK 前确认 `ENV=prod`；发现其他值时停止操作。Job 中检查平台注入的 ENV，不在脚本中将其切换到其他环境。
+- 普通用户首次导入 SDK 前确认 `ENV=prod`，其他值停止操作；已确认管理员明确选择 test 时使用 [管理员测试环境](admin.md) 的连接示例。Job 中检查平台注入的 ENV 与已授权目标一致，不覆盖为其他环境。
 - 在源码仓库里执行示例时，用已安装的 wheel 并从源码目录外运行，避免同名未构建源码覆盖已安装包。
 
 ```python
 import os
 
 if os.environ.get("ENV", "prod") != "prod":
-    raise RuntimeError("此 Skill 仅支持生产环境（ENV=prod）")
+    raise RuntimeError("此示例只连接生产环境（ENV=prod）")
 os.environ["ENV"] = "prod"
 
 from current_data_py.remote import DataClient, MetadataFilter
@@ -28,7 +36,7 @@ with DataClient() as client:
     pass
 ```
 
-- 使用 `DataClient()` 连接生产默认地址并保持 TLS。认证使用平台认可的 channel／拦截器；原始 stub 支持 metadata，iter_data／open_td 没有逐次认证参数。
+- `DataClient()` 的默认地址由已授权目标的 ENV 决定，保持 TLS；上例为普通用户的生产连接。认证使用平台认可的 channel／拦截器；原始 stub 支持 metadata，iter_data／open_td 没有逐次认证参数。
 
 ## 2. 搜索数据：iter_data
 
@@ -55,7 +63,7 @@ with DataClient() as client:
 | timeout | 整条流的秒数上限，不是每批次超时 |
 
 - iter_data 基于 StreamDataReferences，不需要手动分页；流式记录可能不含完整元数据，完整内容使用 GetData。
-- 当前没有 `query()`。提前退出必须关闭迭代器；上例的 closing 同样适用于 break 或只取第一条。
+- 提前退出必须关闭迭代器；上例的 closing 同样适用于 break 或只取第一条。其他查询方式按本次核对版本的 API 使用。
 
 ## 3. 组合筛选、计数和分页
 
@@ -102,7 +110,7 @@ metadata = client.stub.GetData(service_pb2.GetDataRequest(data_id=data_id), time
 # 如果用户提供的是业务唯一标识，改用 optional_id，不能同时提供两个字段。
 ```
 
-- 当前没有 `client.get_data()` 便捷方法。data_id 不是对象路径，GetData 返回的 metadata 才能传给 open_td。
+- data_id 不是对象路径，GetData 返回的 metadata 才能传给 open_td；如所用版本提供便捷方法，按该版本 API 使用。
 
 ## 5. 读取 TD 和解码消息
 
@@ -268,5 +276,5 @@ with client.open_td(verified, provider=upload.provider, bucket=upload.bucket) as
 ## 10. 异常与能力范围
 
 - RPC 错误按 grpc.RpcError 的 code／details 排查；不要把网络超时判定成权限不足，不能将查询失败当作空结果。
-- DataClient 不提交 Job，也没有便捷的 get_data、query、upload_file 方法；Job 使用 Processing Service API，文件上传使用存储客户端或签名 URL。
+- Job 使用 Processing Service API；文件上传使用存储客户端或签名 URL。SDK 便捷方法按本次核对版本的文档使用，本文示例不代表完整 API 清单。
 - ManagementClient 必须保持打开直到读取／传输完成；临时凭据由 SDK 管理，SDK 不会自动重试所有业务 RPC。
