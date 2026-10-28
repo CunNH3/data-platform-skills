@@ -1,17 +1,6 @@
 # 数据平台 Skills
 
-供 AI Agent 使用的数据平台说明书：搜索和读取数据、处理并上传 TD、申请开发机、提交 Job 及查询日志。默认使用生产环境，所有用户均可明确选择测试环境。使用平台仍需具备相应权限和网络访问条件。
-
-| Skill | 用途 |
-|---|---|
-| [data-platform](skills/data-platform/SKILL.md) | 数据平台完整使用流程，包含开发机直接运行代码、本地构建镜像提交 Job 两个案例 |
-
-## 更新说明
-
-- 最近更新：测试阶段取消管理员限制，所有用户均可明确选择测试环境；默认仍使用生产环境。
-- 首次使用介绍最近一次更新，之后只提示尚未介绍的新记录；没有新增时简短说明。
-
-完整历史见 [更新记录](skills/data-platform/references/updates.md)。
+[data-platform](skills/data-platform/SKILL.md) 是数据平台的 Agent 入口。它指导 Agent 检查最新兼容的 `current-data-py`，读取 SDK 包内的能力索引、接口文档、业务 Skill 和案例。
 
 ## 安装
 
@@ -21,12 +10,18 @@
 请安装 https://github.com/CunNH3/data-platform-skills/tree/main/skills/data-platform 这个 Skill
 ```
 
-手动安装时复制整个 `skills/data-platform` 文件夹，保留 `SKILL.md` 和其引用的全部文件；安装位置遵循所用 Agent 的要求。
+手动安装时复制整个 `skills/data-platform` 文件夹，安装位置遵循所用 Agent 的要求。使用平台仍需相应认证和网络访问条件。
 
-## 发布与更新
+## 更新说明
 
-1. 修改对应 Skill 的正文和引用文档，检查链接、请求参数及示例，再提交并推送到仓库；用户可从 `main` 获取最新版。
-2. 需要固定版本时，在 GitHub 的 **Releases → Draft a new release** 创建如 `v0.1.0` 的 tag，选择发布提交、填写变更说明，再点击 **Publish release**。[GitHub 发布说明](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository)
-3. 安装入口的本地文件不会自动覆盖；入口要求每次使用先读取 `main` 的最新索引和更新记录，提示变化后按需读取同一提交的说明。已安装旧入口的用户需更新一次，之后文档变化无需反复重新安装。
+- GitHub 保留入口；接口定义和业务正文随 SDK 一起发布，安装后可离线读取。
+- Agent 每次检查入口与 SDK 版本，读取包内更新记录并提示新增内容；任务中使用同一版本。
+- 入口历史见 [更新记录](skills/data-platform/references/updates.md)。
 
-公开内容只包含使用说明和示例；账号凭据、SSH 私钥、kubeconfig、签名链接、业务数据和运行产物不进入仓库。
+## 维护与发布
+
+1. 在 data-infra 维护 SDK、Proto、能力索引和业务 Skill，构建并验证 SDK 包内说明书。
+2. 按 SDK 发布流程更新版本并发布到 PyPI，验证发布包包含 `current_data_py.docs` 和完整文档。
+3. 再发布 GitHub 入口改动，确保新入口指向的能力已随 SDK 提供；入口机制不变时无需为每个业务接口更新本仓库。
+
+公开仓库不提交凭据、SSH 私钥、kubeconfig、签名链接、业务数据或运行产物。
