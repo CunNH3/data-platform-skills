@@ -11,10 +11,16 @@ python -m pip install current-data-py requests PyYAML
 ```
 
 - 使用平台已发布且验证兼容的 SDK 版本，在运行环境中固定实际安装的依赖版本。无需访问数据平台代码仓库。
-- 默认生产；测试环境在首次导入 SDK **之前**设置 `ENV=test`。Job 中沿用平台注入的 ENV，不在脚本中强制覆盖环境。
+- 仅连接生产环境，首次导入 SDK 前确认 `ENV=prod`；发现其他值时停止操作。Job 中检查平台注入的 ENV，不在脚本中将其切换到其他环境。
 - 在源码仓库里执行示例时，用已安装的 wheel 并从源码目录外运行，避免同名未构建源码覆盖已安装包。
 
 ```python
+import os
+
+if os.environ.get("ENV", "prod") != "prod":
+    raise RuntimeError("此 Skill 仅支持生产环境（ENV=prod）")
+os.environ["ENV"] = "prod"
+
 from current_data_py.remote import DataClient, MetadataFilter
 
 with DataClient() as client:
@@ -22,19 +28,7 @@ with DataClient() as client:
     pass
 ```
 
-- 默认地址由 ENV 决定，使用 TLS；也可 `DataClient(address="实际gRPC主机:端口")`，address 不带 https:// 或 /api 路径。
-- 集群内已验证的测试连接如下，仅在相同网络和认证条件下使用；本机及生产不套用此内部地址：
-
-```python
-import grpc
-from current_data_py.remote import DataClient
-
-with grpc.insecure_channel("management-service.test.svc.cluster.local:50051") as channel:
-    with DataClient(channel) as client:
-        pass
-```
-
-- 自建 channel 由调用方关闭。认证使用平台认可的 channel／拦截器；原始 stub 支持 metadata，iter_data／open_td 没有逐次认证参数。
+- 使用 `DataClient()` 连接生产默认地址并保持 TLS。认证使用平台认可的 channel／拦截器；原始 stub 支持 metadata，iter_data／open_td 没有逐次认证参数。
 
 ## 2. 搜索数据：iter_data
 

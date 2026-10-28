@@ -4,10 +4,7 @@
 
 ## 调用入口
 
-| 环境 | 站点 |
-|---|---|
-| test | https://data-test.current-robotics.work |
-| prod | https://data.current-robotics.work |
+生产站点：`https://data.current-robotics.work`。本 Skill 的所有数据和任务操作均使用此站点。
 
 - HTTP POST，JSON 请求；设置 `Content-Type: application/json`、`Connect-Protocol-Version: 1`，认证沿用目标环境的正式方式。
 - 数据接口前缀：`/api/management.service.v1.DataManagementService/`。

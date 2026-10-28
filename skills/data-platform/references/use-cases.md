@@ -34,17 +34,16 @@ output_prefix: job-results/feature-processing/<本次运行ID>/
 
 Agent 执行：
 
-1. 确认搜索条件、处理逻辑和范围，明确运行环境。
+1. 确认搜索条件、处理逻辑和范围，使用生产环境。
 2. 按 [开发机使用](dev-pod.md) 补齐用户名、CPU／内存、GPU 数量和 SSH 公钥，确认配置、检查资源后申请；已有合适开发机可直接使用。
 3. 通过 VPN SSH 登录，将代码和参数放入本次独立目录，在独立 Python 环境安装固定版本依赖；先读取少量样本检查数据和处理逻辑。
-4. 在开发机上执行脚本，将标准输出和错误输出保存为 run.log。运行环境使用本次确认的 prod／test，日志、进程和退出码通过 SSH 查看。
+4. 在生产开发机上执行脚本，将标准输出和错误输出保存为 run.log。使用 `ENV=prod`，日志、进程和退出码通过 SSH 查看。
 5. 程序使用 DataClient 按特征搜索并处理数据，完成 TD 上传和 RegisterData 登记，输出源数据与结果数据 ID 的对应关系。
 6. Agent 核对退出码、日志、登记记录和远端 TD，交付结果；开发机保持原状态，用户要求释放时再按一次确认流程处理。
 
 在开发机项目目录内运行的命令示例，当前 Python 应已是准备好的虚拟环境：
 
 ```sh
-# ENV 使用本次确认的环境；用户指定 test 时相应替换。
 ENV=prod JOB_PARAMETERS_FILE="$PWD/params.yaml" python -u main.py > run.log 2>&1
 ```
 
