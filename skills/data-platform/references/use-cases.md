@@ -60,30 +60,13 @@ ENV=prod JOB_PARAMETERS_FILE="$PWD/params.yaml" python -u main.py > run.log 2>&1
 Agent 执行：
 
 1. 确认与 Case 1 相同的数据条件、处理逻辑和结果要求；检查本机 Docker 及镜像仓库权限，缺少 Docker 时提示安装并启动。
-2. 在独立构建目录放入同一份 main.py、项目模块和固定版本 requirements.txt，使用平台常规基础镜像构建。
-3. Dockerfile 安装依赖并设置 `ENTRYPOINT ["python", "-u", "/app/main.py"]`；业务参数和数据放在运行阶段读取，不打入镜像。
+2. 在独立构建目录放入同一份 main.py、项目模块和固定版本 requirements.txt，按 [镜像编译](jobs.md#镜像编译) 使用常用基础镜像构建。
+3. 核对任务启动入口，业务参数和数据放在运行阶段读取。
 4. 先用小样本测试镜像，再以唯一版本推送到用户有权限且服务允许的任务仓库，记录镜像地址和 digest。
 5. 按 [任务提交与跟踪](jobs.md) 确认资源、检查可用量，将镜像填入 spec.image、params.yaml 内容填入 parametersYaml，调用 CreateJob。
 6. Job 执行同一段“搜索 → 处理 → TD 上传登记”代码；Agent 通过 GetJob 和 GetJobLogs 查询状态及运行日志。
 7. 核验任务状态、登记记录和远端 TD，交付结果。Job 成功与业务处理满足要求分别确认。
 
-基础镜像固定为：
-
-```text
-default-acr-registry.cn-beijing.cr.aliyuncs.com/data_infra/base_image:build-20261016.1@sha256:d0a80f1008332d5b383ac91e92f963937d3dea8444b8651bd75dc4ab25b1be8c
-```
-
-构建与推送命令示例，TASK_IMAGE 为本次已授权仓库中的唯一镜像版本：
-
-```sh
-docker info
-docker build --platform linux/amd64 -t "$TASK_IMAGE" .
-# 完成小样本测试后再推送。
-docker push "$TASK_IMAGE"
-docker image inspect "$TASK_IMAGE" --format '{{json .RepoDigests}}'
-```
-
-- 多文件项目将实际使用的模块复制进镜像，排除密钥、凭据、本地数据和输出目录；使用可写工作目录，明确任务用户，并清空不适用于任务的基础镜像 CMD。
 - 提交使用集群可达且符合白名单的镜像地址；平台挂载 params.yaml 并注入 JOB_PARAMETERS_FILE 和 ENV，不能把它们替换成开发机路径。
 - 本方式只使用现有镜像 Job，不代表平台已有代码包执行或远程镜像构建服务。
 

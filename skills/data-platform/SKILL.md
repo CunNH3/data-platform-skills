@@ -5,10 +5,12 @@ description: 使用公司的数据平台搜索和读取数据、上传并登记�
 
 # 数据平台使用
 
-## 说明书更新
+## 每次使用先读取最新说明
 
-- 管理员提供正式在线说明书目录后，执行前先读取目录及本次所需文档；当前按下表读取本包自带的本地正文，无需访问源码仓库或安装其他 Skill。
-- 只读取本次任务需要的文档。接口与规范集中在 references，本地 Skill 不会自行拉取远程版本。
+- 每次调用本 Skill，执行平台操作前先重新请求 `https://api.github.com/repos/CunNH3/data-platform-skills/commits/main`，禁用缓存并取得本次 main 的提交 SHA，不复用上次调用的结果。
+- 随后读取 `https://raw.githubusercontent.com/CunNH3/data-platform-skills/<SHA>/skills/data-platform/SKILL.md`，以该版本的索引为准；本次所需的 references 文档也从同一 SHA 的相对路径读取，不使用安装包里的旧正文替代。
+- 一次调用固定使用上述 SHA，刷新一次后直接按最新索引执行；下一次调用重新检查 main。无需访问平台源码仓库，也不要求用户重新安装全部文档。
+- 无法查询 main 或读取本次必需文档时，先提示具体失败原因并暂停平台操作，不能将本地缓存当作最新说明继续执行。
 
 ## 能力导航
 

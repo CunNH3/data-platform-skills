@@ -8,7 +8,7 @@
 
 ## 安装
 
-将下面这句话发送给支持安装 GitHub Skill 的 Agent：
+将下面这句话发送给你的 AI Agent：
 
 ```text
 请安装 https://github.com/CunNH3/data-platform-skills/tree/main/skills/data-platform 这个 Skill
@@ -20,6 +20,6 @@
 
 1. 修改对应 Skill 的正文和引用文档，检查链接、请求参数及示例，再提交并推送到仓库；用户可从 `main` 获取最新版。
 2. 需要固定版本时，在 GitHub 的 **Releases → Draft a new release** 创建如 `v0.1.0` 的 tag，选择发布提交、填写变更说明，再点击 **Publish release**。[GitHub 发布说明](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository)
-3. 安装固定版本时，将链接中的 `main` 替换为已发布的 tag。已安装的本地副本不会因仓库更新自动同步，需要重新安装或显式更新。
+3. 安装入口的本地文件不会自动覆盖；入口要求每次使用先读取 `main` 的最新索引，再按需读取同一提交的说明。已安装旧入口的用户需更新一次，之后文档变化无需反复重新安装。
 
 公开内容只包含使用说明和示例；账号凭据、SSH 私钥、kubeconfig、签名链接、业务数据和运行产物不进入仓库。
